@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "447302528923",
+    "project_id": "flexed-f275f",
+    "storage_bucket": "flexed-f275f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:447302528923:android:bae93ed084731ffaf8bb3e",
+        "android_client_info": {
+          "package_name": "com.example.flex_education"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "447302528923-ildoh2621ql1tvvqe1vc52ih81jsq5s8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjLbYAmAuja_cLBR1IEQgW7XeQrCmI-58"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "447302528923-ildoh2621ql1tvvqe1vc52ih81jsq5s8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "447302528923-0luq3676gnlbpmbt5ebhocfureca5ajs.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flexed.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
