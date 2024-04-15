@@ -2,8 +2,11 @@ import 'package:flex_education/components/electric_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../models/course.dart';
+
 class PostDetails extends StatefulWidget {
-  const PostDetails({super.key});
+  final Course course;
+  const PostDetails({required this.course});
 
   @override
   State<PostDetails> createState() => _PostDetailsState();
@@ -29,7 +32,7 @@ class _PostDetailsState extends State<PostDetails> {
                 height: MediaQuery.of(context).size.height * 0.5,
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                        image: AssetImage('assets/introduction_python.jpg'),
+                        image: NetworkImage(widget.course.thumbnail),
                         fit: BoxFit.cover)),
               ),
             ),
@@ -37,7 +40,10 @@ class _PostDetailsState extends State<PostDetails> {
           //On the foregorund, it is displayed a DraggableScrollableSheet
           Positioned.fill(
             top: 0,
-            child: CustomDraggableScrollableSheet(width: double.maxFinite),
+            child: CustomDraggableScrollableSheet(
+              width: double.maxFinite,
+              course: widget.course,
+            ),
           )
         ]),
       ),
@@ -47,18 +53,8 @@ class _PostDetailsState extends State<PostDetails> {
 
 class CustomDraggableScrollableSheet extends StatefulWidget {
   final double width; // Define the variable
-  final description =
-      '''Embark on a journey into the world of programming with our comprehensive beginner-friendly Python course. Whether you're an absolute novice or someone with minimal coding experience, this course is designed to equip you with the fundamental skills needed to kickstart your programming journey. Throughout the course, you'll delve into the following key topics: Introduction to Python: Begin with the basics, understanding what Python is, its syntax, and why it's a popular choice for beginners and professionals alike.
-Setting Up Your Environment: We'll guide you through the process of setting up Python on your computer, ensuring you're ready to dive into coding right away.
-Variables and Data Types: Learn how to work with different data types such as integers, floats, strings, lists, tuples, and dictionaries. Understand the concept of variables and how they store data.
-Control Flow: Master the foundational concepts of control flow, including if statements, loops (for and while), and the importance of indentation in Python.
-Functions: Explore the power of functions in Python, understanding how they help in organizing code for better readability and reusability.
-Data Structures: Delve into essential data structures like lists, tuples, dictionaries, and sets. Learn how to manipulate and access data efficiently using these structures.
-File Handling: Discover how Python can interact with files on your computer, including reading from and writing to files.
-Exception Handling: Understand how to handle errors gracefully in your Python programs using try-except blocks.
-''';
-  final images = ['assets/python_course1.png', 'assets/python_course2.jpg'];
-  CustomDraggableScrollableSheet({required this.width});
+  final Course course;
+  CustomDraggableScrollableSheet({required this.width, required this.course});
   @override
   State<CustomDraggableScrollableSheet> createState() =>
       _CustomDraggableScrollableSheetState();
@@ -68,23 +64,6 @@ class _CustomDraggableScrollableSheetState
     extends State<CustomDraggableScrollableSheet> {
   var _isInit = true;
   var circularRadius = 30.0;
-
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   if (_isInit) {
-  //     // The width of the screen
-  //     width = MediaQuery.of(context).size.width;
-  //     // While most of the data for the post details is already in the app state and passed to the details screen through a constructor,
-  //     // the additional images have to be retrieved from the database.
-  //     // In addition, in this screen, are also displayed the users who both participate to the post and are current user's followings.
-  //     // To obtain all this information, a Futurebuilder is used
-  //     future = Provider.of<Users>(context, listen: false)
-  //         .partecipantsAndPhotos(widget.post.postId);
-
-  //     _isInit = false;
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +112,7 @@ class _CustomDraggableScrollableSheetState
                       SizedBox(
                         child: Text(
                           //the title
-                          'Introduction to Python',
+                          widget.course.title,
                           style: const TextStyle(
                               fontFamily: 'Ubuntu',
                               fontWeight: FontWeight.w800,
@@ -183,7 +162,7 @@ class _CustomDraggableScrollableSheetState
                           padding: const EdgeInsets.only(right: 30),
                           child: Text(
                             //the name of the location
-                            'English',
+                            widget.course.language,
                             style: const TextStyle(
                               fontFamily: 'Ubuntu',
                             ),
@@ -224,7 +203,7 @@ class _CustomDraggableScrollableSheetState
                                   color: Colors.black),
                               children: [
                                 TextSpan(
-                                    text: '10 People',
+                                    text: "${widget.course.likes}",
                                     style: const TextStyle(
                                         fontFamily: 'Ubuntu',
                                         fontWeight: FontWeight.w600,
@@ -246,7 +225,10 @@ class _CustomDraggableScrollableSheetState
                   Padding(
                       padding: EdgeInsets.only(bottom: 12),
                       child: ElectricButton(
-                          buttonPressed: () {}, title: 'Enroll')),
+                        buttonPressed: () {},
+                        title: 'Enroll',
+                        color: Color.fromARGB(255, 129, 133, 240),
+                      )),
                   //from here, the information which have to be retrieved from the database are displayed
                   SizedBox(
                       width: double.maxFinite,
@@ -271,7 +253,7 @@ class _CustomDraggableScrollableSheetState
                                             fontWeight: FontWeight.w400,
                                             fontSize: 15)),
                                     TextSpan(
-                                        text: '20 students \n',
+                                        text: "${widget.course.enrolled} \n",
                                         style: const TextStyle(
                                             fontFamily: 'Ubuntu',
                                             fontWeight: FontWeight.w600,
@@ -299,23 +281,6 @@ class _CustomDraggableScrollableSheetState
                                           height: 1.8,
                                         )),
                                     const TextSpan(
-                                        text: 'You follow ',
-                                        style: TextStyle(
-                                          fontFamily: 'Ubuntu',
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 15,
-                                          height: 1.8,
-                                        )),
-                                    TextSpan(
-                                        text: '5 people',
-                                        style: const TextStyle(
-                                            fontFamily: 'Ubuntu',
-                                            fontWeight: FontWeight.w600,
-                                            color: Color.fromARGB(
-                                                255, 129, 133, 240),
-                                            height: 1.8,
-                                            fontSize: 15)),
-                                    const TextSpan(
                                         text: ' among enrolled',
                                         style: TextStyle(
                                             fontFamily: 'Ubuntu',
@@ -340,8 +305,7 @@ class _CustomDraggableScrollableSheetState
                                         fontSize: 22),
                                     children: <TextSpan>[
                                       TextSpan(
-                                          text:
-                                              'This is a begginner friendly course so there are no requirements. I do not expect you to be able to write any code! You will learn anything here.',
+                                          text: widget.course.requirements,
                                           style: const TextStyle(
                                             fontFamily: 'Ubuntu',
                                             fontWeight: FontWeight.w400,
@@ -366,7 +330,7 @@ class _CustomDraggableScrollableSheetState
                                         fontSize: 22),
                                     children: <TextSpan>[
                                       TextSpan(
-                                          text: widget.description,
+                                          text: widget.course.description,
                                           style: const TextStyle(
                                             fontFamily: 'Ubuntu',
                                             fontWeight: FontWeight.w400,
@@ -399,8 +363,10 @@ class _CustomDraggableScrollableSheetState
                                   ),
                                   child: ClipRRect(
                                       borderRadius: BorderRadius.circular(20),
-                                      child: Image.asset(
-                                        widget.images[index],
+                                      child: Image.network(
+                                        index == 0
+                                            ? widget.course.photo1
+                                            : widget.course.photo2,
                                         fit: BoxFit.cover,
                                       )),
                                 ),

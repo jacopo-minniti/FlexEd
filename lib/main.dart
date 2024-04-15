@@ -1,4 +1,5 @@
 import 'package:flex_education/services/authentication__service.dart';
+import 'package:flex_education/services/firebase_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
           //We istantiate the first actual provider of the application. As for convention, providers should be instatiated just one level above the first class where they need to be used
           value: AuthenticationService.instance(),
         ),
+        ChangeNotifierProvider(create: (context) => MyProvider()),
       ],
       child: const MaterialApp(
         title: 'FlexEd', // the title displayed below the launcher
@@ -36,6 +38,5 @@ class MyApp extends StatelessWidget {
             AuthenticationStream(), //the actual home widget of the app, i.e. the widget shown initially, is not a screen
       ),
     );
-    ;
   }
 }

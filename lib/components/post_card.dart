@@ -1,34 +1,46 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flex_education/components/electric_button.dart';
 import 'package:flex_education/pages/post_details.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/post.dart';
+import '../models/course.dart';
+import '../pages/quiz_page.dart';
+import '../services/firebase_provider.dart';
 
 class PostCard extends StatelessWidget {
+  final Course course;
+  PostCard({required this.course});
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => PostDetails()),
+          MaterialPageRoute(
+              builder: (context) => PostDetails(
+                    course: course,
+                  )),
         );
       },
       //to simplify and make more efficient the widget, all the parts of the card are divided in three widgets
       child: Column(children: [
-        Up(),
-        CentralImage(),
-        Bottom(),
+        Up(course: course),
+        CentralImage(course: course),
+        Bottom(course: course),
       ]),
     );
   }
 }
 
 class Up extends StatelessWidget {
+  final Course course;
+  Up({required this.course});
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -40,14 +52,14 @@ class Up extends StatelessWidget {
         children: [
           Padding(
             padding: EdgeInsets.only(bottom: 5, right: 12, left: width * 0.03),
-            child: const CircleAvatar(
+            child: CircleAvatar(
                 radius: 16,
-                backgroundImage: AssetImage('assets/profile pic.png')),
+                backgroundImage: NetworkImage(course.profilePicture)),
           ),
-          const Padding(
-            padding: EdgeInsets.only(bottom: 10),
-            child: Text('jacopo_04',
-                style: TextStyle(
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Text(course.username,
+                style: const TextStyle(
                     fontFamily: 'Ubuntu',
                     fontSize: 17,
                     fontWeight: FontWeight.w500)),
@@ -71,33 +83,11 @@ class Up extends StatelessWidget {
                   ),
                   onTap: () async {
                     var res = 'Post eliminato';
-                    try {
-                      // await Provider.of<Posts>(context, listen: false)
-                      //     .deletePost(post.postId);
-                    } catch (err) {
-                      res = 'Impossibile eliminare il post. Riprova più tardi';
+                    try {} catch (err) {
+                      res = 'Impossible to delete the post, try later';
                     }
-                    //showCustomSnackbar(context, res);
                   },
                 )
-                //report post (feature to add)
-                // : PopupMenuItem(
-                //     padding: const EdgeInsets.only(left: 25),
-                //     child: const Text(
-                //       'Segnala',
-                //       textAlign: TextAlign.center,
-                //     ),
-                //     onTap: () async {
-                //       var res = 'Post segnalato con successo';
-                //       try {
-                //         // await Provider.of<Posts>(context, listen: false)
-                //         //     .report(post.postId.toString(), currentUserId);
-                //       } catch (err) {
-                //         res = 'Errore. Riprova più tardi';
-                //       }
-                //       // showCustomSnackbar(context, res);
-                //     },
-                //   )
               ],
             ),
           )
@@ -108,6 +98,9 @@ class Up extends StatelessWidget {
 }
 
 class CentralImage extends StatelessWidget {
+  final Course course;
+  CentralImage({required this.course});
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -121,8 +114,7 @@ class CentralImage extends StatelessWidget {
           width: width,
           child: Hero(
               tag: 1,
-              child: Image.asset('assets/introduction_python.jpg',
-                  fit: BoxFit.cover)),
+              child: Image.network(course.thumbnail, fit: BoxFit.cover)),
         ),
         Positioned(
             bottom: 10,
@@ -140,7 +132,7 @@ class CentralImage extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                   child: Text(
-                    'Introduction to Python',
+                    course.title,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                         fontFamily: 'Ubuntu',
@@ -156,14 +148,27 @@ class CentralImage extends StatelessWidget {
 }
 
 class Bottom extends StatefulWidget {
+  final Course course;
+  Bottom({required this.course});
+
   @override
   State<Bottom> createState() => _BottomState();
 }
 
 class _BottomState extends State<Bottom> {
-  var is_liked = false;
+  late bool isLiked;
+  late bool isEnrolled;
+
+  @override
+  void initState() {
+    super.initState();
+    isLiked = widget.course.isLiked;
+    isEnrolled = widget.course.isEnrolled;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final db = FirebaseFirestore.instance;
     final height = MediaQuery.of(context).size.height * 0.07;
     return Column(
       children: [
@@ -198,27 +203,29 @@ class _BottomState extends State<Bottom> {
                             IconButton(
                               onPressed: () {
                                 setState(() {
-                                  is_liked = !is_liked;
+                                  isLiked = !isLiked;
                                 });
+                                Provider.of<MyProvider>(context, listen: false)
+                                    .likeCourse(widget.course.courseId);
                               },
                               icon: Icon(
-                                is_liked
+                                isLiked
                                     ? CupertinoIcons.heart_fill
                                     : CupertinoIcons.heart,
-                                color: is_liked ? Colors.red : Colors.black,
+                                color: isLiked ? Colors.red : Colors.black,
                                 size: 30,
                               ),
                             ),
                             IconButton(
                               onPressed: () {},
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.comment_outlined,
                                 size: 30,
                               ),
                             ),
                             IconButton(
                               onPressed: () {},
-                              icon: Icon(
+                              icon: const Icon(
                                 CupertinoIcons.share,
                                 size: 30,
                               ),
@@ -232,8 +239,42 @@ class _BottomState extends State<Bottom> {
               ),
             ),
             ElectricButton(
-              buttonPressed: () {},
-              title: 'Enroll',
+              buttonPressed: () {
+                setState(() {
+                  isEnrolled = !isEnrolled;
+                });
+                Provider.of<MyProvider>(context, listen: false)
+                    .enrollCourse(widget.course.courseId);
+                if (widget.course.isEnrolled == true) {
+                  return;
+                }
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Adjust Course to your level'),
+                      content: Text(
+                          'Take a quick quiz to caliber the level of the course'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => QuizPage()),
+                            );
+                          },
+                          child: Text('Ok'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              color: isEnrolled
+                  ? Color.fromARGB(255, 83, 88, 233)
+                  : Color.fromARGB(255, 129, 133, 240),
+              title: isEnrolled ? 'Enrolled' : 'Enroll',
             )
           ],
         ),
@@ -243,7 +284,7 @@ class _BottomState extends State<Bottom> {
           height: height,
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Text(
-            'Here there is the description of the Course (at least a first part of the text, the other is ellipsed)',
+            widget.course.description,
             style: const TextStyle(fontFamily: 'Ubuntu', fontSize: 14),
             //when the description overflows the available space, three dots are shown thanks to the TextOverflow.ellipsis enum value
             overflow: TextOverflow.ellipsis,

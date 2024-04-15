@@ -27,16 +27,12 @@ class AuthenticationService with ChangeNotifier {
     //here is defined the stream which listen to changes for the status of the authentication.
     //This stream is connected with the Firebase Authentication Service.
     _auth.authStateChanges().listen((firebaseUser) {
-      print('Firebase');
-      print(firebaseUser);
       if (firebaseUser == null) {
         //if the user is null, the user is not atuhenticated
         _status = Status.unauthenticated;
       } else {
         //the user exists and the authentication token is active.
         _user = firebaseUser;
-        print('users');
-        print(_user);
         _status = Status.authenticated;
       }
       //notifyListeners() notify the changes to all listeners. In this case, the only listeners is the AuthenticationStream(), which automatically changes screen
@@ -65,9 +61,6 @@ class AuthenticationService with ChangeNotifier {
         email: email, password: password);
     _userPassword = password;
     _userEmail = email;
-    print('emaik');
-    print(_userEmail);
-    print(email);
     notifyListeners();
   }
 
@@ -121,6 +114,5 @@ class AuthenticationService with ChangeNotifier {
     _userEmail = null;
     _userPassword = null;
     notifyListeners();
-    print('account Deleted');
   }
 }

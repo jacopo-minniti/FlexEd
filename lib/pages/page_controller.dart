@@ -1,8 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flex_education/components/post_card.dart';
-import 'package:flex_education/models/post.dart';
+import 'package:flex_education/models/course.dart';
+import 'package:flex_education/pages/community_page.dart';
+import 'package:flex_education/pages/home_page.dart';
 import 'package:flex_education/pages/learning_roadmap.dart';
+import 'package:flex_education/pages/profile_page.dart';
+import 'package:flex_education/pages/search_page.dart';
 import 'package:flex_education/services/authentication__service.dart';
+import 'package:flex_education/services/firebase_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -21,15 +26,17 @@ class _PageControllerState extends State<PageController> {
   @override
   Widget build(BuildContext context) {
     //AuthenticationService.instance().signOut();
+    Provider.of<MyProvider>(context, listen: false).write();
+    Provider.of<MyProvider>(context, listen: false).getUser();
     AuthenticationService auth = Provider.of<AuthenticationService>(context);
     List<Widget> _widgetOptions = <Widget>[
-      id_page(),
-      search_page(),
-      community(),
-      profile()
+      HomePage(),
+      SearchPage(),
+      CommunityPage(),
+      ProfilePage(),
     ];
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 12, 10, 10),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
@@ -84,60 +91,6 @@ class _PageControllerState extends State<PageController> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget id_page() {
-    return Scaffold(
-      appBar: AppBar(
-          title: const Padding(
-            padding: const EdgeInsets.only(left: 7, bottom: 5),
-            child: Text(
-              'Feed',
-              style: TextStyle(fontSize: 35, letterSpacing: 1.5),
-            ),
-          ),
-          centerTitle: false,
-          backgroundColor: Color.fromARGB(255, 129, 133, 240),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.settings,
-                    size: 30,
-                  )),
-            )
-          ]),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20,
-            ),
-            PostCard(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget search_page() {
-    return Center(
-      child: Text('Search'),
-    );
-  }
-
-  Widget community() {
-    return Center(
-      child: Text('Community'),
-    );
-  }
-
-  Widget profile() {
-    return Center(
-      child: LearningRoadmapPage(),
     );
   }
 }

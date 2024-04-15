@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 class ElectricButton extends StatelessWidget {
   final VoidCallback buttonPressed;
   final String title;
+  final Color color;
 
-  const ElectricButton({required this.buttonPressed, required this.title});
+  const ElectricButton(
+      {required this.buttonPressed, required this.title, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -13,8 +15,7 @@ class ElectricButton extends StatelessWidget {
         onPressed: buttonPressed,
         style: ButtonStyle(
             elevation: MaterialStateProperty.all(10),
-            backgroundColor:
-                MaterialStateProperty.all(Color.fromARGB(255, 129, 133, 240)),
+            backgroundColor: MaterialStateProperty.all(color),
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(11.0),

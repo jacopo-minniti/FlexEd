@@ -5,6 +5,7 @@ import '../pages/login.dart';
 import '../pages/splash_screen.dart';
 import 'authentication__service.dart';
 import '../pages/page_controller.dart' as t;
+import 'firebase_provider.dart';
 
 class AuthenticationStream extends StatefulWidget {
   //this is the first Stateful Widget of the app
@@ -29,6 +30,10 @@ class _AuthenticationStreamState extends State<AuthenticationStream> {
           case Status.authenticating:
             return const Login(); //if the authentication token has expired, the AuthenticateUserScreen is shown
           case Status.authenticated:
+            // return ChangeNotifierProvider(
+            //   create: (_) => MyProvider(),
+            //   child: t.PageController(),
+            // );
             return t.PageController();
         }
       },

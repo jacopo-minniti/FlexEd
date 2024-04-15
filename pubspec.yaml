@@ -41,6 +41,9 @@ dependencies:
   qr_flutter: ^4.1.0
   google_nav_bar: ^5.0.6
   provider: ^6.1.2
+  flutter_markdown: ^0.6.19
+  url_launcher: ^6.2.4
+  string_unescape: ^2.0.0
 
 dev_dependencies:
   flutter_test:
